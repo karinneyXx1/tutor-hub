@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .db import connect, init_db
-from .routers import auth, homework, lessons, students
+from .routers import auth, homework, lessons, progress, students
 
 
 @asynccontextmanager
@@ -31,6 +31,7 @@ app.include_router(auth.router)
 app.include_router(students.router)
 app.include_router(homework.router)
 app.include_router(lessons.router)
+app.include_router(progress.router)
 
 
 @app.get("/api/health", tags=["health"])
