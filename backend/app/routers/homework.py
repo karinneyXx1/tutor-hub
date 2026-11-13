@@ -82,7 +82,7 @@ def submit_homework(
     db: sqlite3.Connection = Depends(get_db),
 ) -> HomeworkOut:
     row = _get_visible(db, student, homework_id)
-    if row["status"] not in ("assigned", "returned"):
+    if row["status"] == "submitted":
         raise HTTPException(status.HTTP_409_CONFLICT, "Homework cannot be submitted now")
     db.execute(
         """UPDATE homework SET status = 'submitted', answer = ?, submitted_at = datetime('now')

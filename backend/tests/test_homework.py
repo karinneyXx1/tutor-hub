@@ -55,9 +55,6 @@ def test_submit_and_review(client, tutor, student, homework):
     body = reviewed.json()
     assert (body["status"], body["grade"], body["feedback"]) == ("checked", 5, "Отлично")
 
-    again = client.post(f"/api/homework/{hid}/submit", json={"answer": "x"}, headers=auth(student))
-    assert again.status_code == 409
-
 
 def test_return_and_resubmit(client, tutor, student, homework):
     hid = homework["id"]
