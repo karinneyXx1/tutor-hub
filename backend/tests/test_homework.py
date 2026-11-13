@@ -56,6 +56,20 @@ def test_submit_and_review(client, tutor, student, homework):
     assert (body["status"], body["grade"], body["feedback"]) == ("checked", 5, "Отлично")
 
 
+def test_cannot_resubmit_checked_homework(client, tutor, student, homework):
+    hid = homework["id"]
+    client.post(f"/api/homework/{hid}/submit", json={"answer": "v1"}, headers=auth(student))
+    client.post(f"/api/homework/{hid}/review", json={"grade": 5, "feedback": "ok"}, headers=auth(tutor))
+
+    resubmit = client.post(f"/api/homework/{hid}/submit", json={"answer": "v2"}, headers=auth(student))
+    assert resubmit.status_code == 409
+
+    # Оценка и статус не должны быть затёрты попыткой повторной сдачи
+    hw = client.get(f"/api/homework/{hid}", headers=auth(student)).json()
+    assert hw["status"] == "checked"
+    assert hw["grade"] == 5
+
+
 def test_return_and_resubmit(client, tutor, student, homework):
     hid = homework["id"]
     client.post(f"/api/homework/{hid}/submit", json={"answer": "v1"}, headers=auth(student))
