@@ -17,7 +17,7 @@ function setup() {
 describe('LoginForm', () => {
   it('показывает поля с подписями и кнопку входа', () => {
     setup()
-    expect(screen.getByRole('heading', { name: 'Вход' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Вход в кабинет' })).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toHaveAttribute('type', 'email')
     expect(screen.getByLabelText('Пароль')).toHaveAttribute('type', 'password')
     expect(screen.getByRole('button', { name: 'Войти' })).toBeEnabled()

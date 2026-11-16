@@ -74,7 +74,7 @@ describe('Основной сценарий: репетитор выдаёт д�
     localStorage.setItem('tutor-hub-token', 'expired')
     server.use(http.get(`${API}/api/auth/me`, () => HttpResponse.json({}, { status: 401 })))
     render(<App />)
-    expect(await screen.findByRole('heading', { name: 'Вход' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Вход в кабинет' })).toBeVisible()
     expect(localStorage.getItem('tutor-hub-token')).toBeNull()
   })
 
@@ -84,7 +84,7 @@ describe('Основной сценарий: репетитор выдаёт д�
     const user = userEvent.setup()
     render(<App />)
     await user.click(await screen.findByRole('button', { name: 'Выйти' }))
-    expect(await screen.findByRole('heading', { name: 'Вход' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Вход в кабинет' })).toBeVisible()
     expect(localStorage.getItem('tutor-hub-token')).toBeNull()
   })
 })

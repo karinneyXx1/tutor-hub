@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Logo } from '@/components/Logo'
 import { useSingleFlight } from '@/hooks/useSingleFlight'
 import { api, ApiError, type LoginResponse } from '@/lib/api'
 import { focusFirstError, hasErrors, validateLogin, type Errors, type LoginValues } from '@/lib/validation'
@@ -45,12 +46,15 @@ export function LoginForm({ onLogin }: Props) {
   }
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>
-          <h1 className="text-xl">Вход</h1>
+    <Card className="w-full max-w-md gap-6 p-2 pt-6 shadow-2xl shadow-primary/10 ring-primary/20">
+      <CardHeader className="gap-3">
+        <Logo size="sm" />
+        <CardTitle className="mt-2">
+          <h1 className="text-2xl font-medium">Вход в кабинет</h1>
         </CardTitle>
-        <CardDescription>Войдите, чтобы выдавать и проверять домашние задания</CardDescription>
+        <CardDescription className="text-base">
+          Войдите, чтобы выдавать и проверять домашние задания.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form noValidate onSubmit={handleSubmit} aria-label="Вход">
@@ -66,6 +70,7 @@ export function LoginForm({ onLogin }: Props) {
                 id="login-email"
                 type="email"
                 autoComplete="email"
+                placeholder="name@example.com"
                 value={values.email}
                 onChange={(e) => update('email', e.target.value)}
                 aria-invalid={!!errors.email}
@@ -88,10 +93,11 @@ export function LoginForm({ onLogin }: Props) {
                 <FieldError id="login-password-error">{errors.password}</FieldError>
               )}
             </Field>
-            <Button type="submit" size="lg" disabled={pending} className="w-full">
+            <Button type="submit" size="lg" disabled={pending} className="h-11 w-full">
               {pending && <LoaderCircle className="animate-spin" aria-hidden="true" />}
               {pending ? 'Входим…' : 'Войти'}
             </Button>
+            <p className="text-center text-sm text-muted-foreground">Демо: tutor@example.com</p>
           </FieldGroup>
         </form>
       </CardContent>

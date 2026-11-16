@@ -95,7 +95,7 @@ test('двойной клик и Enter во время сохранения — 
   await expect(dialog.getByRole('button', { name: 'Сохраняем…' })).toBeDisabled()
 
   await expect(dialog).toBeHidden()
-  await expect(page.getByRole('listitem')).toHaveCount(1)
+  await expect(page.getByRole('list', { name: 'Домашние задания' }).getByRole('listitem')).toHaveCount(1)
   expect(calls.createHomework).toBe(1)
 })
 

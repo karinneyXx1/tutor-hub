@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { GraduationCap, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 
 import { LoginForm } from '@/components/LoginForm'
+import { Logo } from '@/components/Logo'
 import { Button } from '@/components/ui/button'
 import { api, setToken, type LoginResponse, type User } from '@/lib/api'
 import { HomeworkPage } from '@/pages/HomeworkPage'
@@ -58,38 +59,37 @@ export default function App() {
     setUser(null)
   }
 
-  return (
-    <div className="min-h-svh bg-muted/40">
-      <header className="border-b bg-background">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-          <div className="flex items-center gap-2 font-semibold">
-            <GraduationCap className="size-6 text-primary" aria-hidden="true" />
-            <span>Код-репетитор</span>
-          </div>
-          {user && (
-            <div className="flex items-center gap-3 text-sm">
-              <span className="hidden text-muted-foreground sm:inline">{user.name}</span>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut aria-hidden="true" />
-                Выйти
-              </Button>
-            </div>
-          )}
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-3xl px-4 py-6">
+  if (!user) {
+    return (
+      <main className="grid min-h-svh place-items-center bg-background bg-glow-center px-4 py-10">
         {restoring ? (
           <p role="status" className="text-sm text-muted-foreground">
             Загружаем…
           </p>
-        ) : user ? (
-          <HomeworkPage user={user} />
         ) : (
-          <div className="flex justify-center pt-8">
-            <LoginForm onLogin={handleLogin} />
-          </div>
+          <LoginForm onLogin={handleLogin} />
         )}
+      </main>
+    )
+  }
+
+  return (
+    <div className="min-h-svh bg-background bg-glow bg-no-repeat">
+      <header className="sticky top-0 z-10 border-b bg-background/70 backdrop-blur">
+        <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3">
+          <Logo />
+          <div className="flex items-center gap-4 text-sm">
+            <span className="hidden text-muted-foreground sm:inline">{user.name}</span>
+            <Button variant="ghost" onClick={handleLogout}>
+              <LogOut aria-hidden="true" />
+              Выйти
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
+        <HomeworkPage user={user} />
       </main>
     </div>
   )

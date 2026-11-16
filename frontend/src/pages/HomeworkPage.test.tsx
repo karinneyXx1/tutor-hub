@@ -34,7 +34,7 @@ async function openDialog(ue: ReturnType<typeof userEvent.setup>) {
 async function fillForm(ue: ReturnType<typeof userEvent.setup>, title = 'Циклы for и while') {
   await ue.selectOptions(screen.getByLabelText('Ученик'), 'Иван Петров')
   await ue.type(screen.getByLabelText('Название'), title)
-  await ue.type(screen.getByLabelText('Описание'), 'Задачи 1–5')
+  await ue.type(screen.getByLabelText(/^Описание/), 'Задачи 1–5')
   await ue.type(screen.getByLabelText('Срок сдачи'), inDays(7))
 }
 
@@ -82,6 +82,29 @@ describe('Список заданий: состояния', () => {
     expect(cards[1]).toHaveTextContent('Проверено')
   })
 
+  it('сводка считает задания по статусам; просроченное помечено, у ученика инициалы', async () => {
+    server.use(
+      http.get(`${API}/api/homework`, () =>
+        HttpResponse.json([
+          makeHomework({ id: 1, title: 'Старое', due_date: inDays(-2), status: 'assigned' }),
+          makeHomework({ id: 2, title: 'Сданное', status: 'submitted' }),
+          makeHomework({ id: 3, title: 'Проверенное', due_date: inDays(-5), status: 'checked' }),
+          makeHomework({ id: 4, title: 'Новое', status: 'assigned' }),
+        ]),
+      ),
+    )
+    setup()
+    const stats = await screen.findByRole('list', { name: 'Сводка по статусам' })
+    const tiles = within(stats).getAllByRole('listitem')
+    expect(tiles.map((t) => t.textContent)).toEqual(['2Выдано', '1Сдано', '0На доработке', '1Проверено'])
+
+    const cards = within(screen.getByRole('list', { name: 'Домашние задания' })).getAllByRole('listitem')
+    expect(cards[0]).toHaveTextContent('просрочено')
+    expect(cards[2]).not.toHaveTextContent('просрочено') // проверенное не считается просроченным
+    expect(cards[3]).not.toHaveTextContent('просрочено')
+    expect(cards[0]).toHaveTextContent('АС')
+  })
+
   it('ошибка сервера: понятное сообщение и «Повторить» загружает заново', async () => {
     let attempt = 0
     server.use(
@@ -97,7 +120,7 @@ describe('Список заданий: состояния', () => {
     expect(alert).toHaveTextContent('Не удалось загрузить задания')
     expect(alert).toHaveTextContent('Сервер временно недоступен')
 
-    await ue.click(within(alert).getByRole('button', { name: 'Повторить' }))
+    await ue.click(screen.getByRole('button', { name: 'Повторить' }))
     expect(await screen.findByText('Списки и словари')).toBeVisible()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
@@ -127,7 +150,7 @@ describe('Диалог «Новое домашнее задание»', () => {
   it('открывается кнопкой, показывает поля с подписями и закрывается «Отмена»', async () => {
     const ue = setup()
     const dialog = await openDialog(ue)
-    for (const label of ['Ученик', 'Название', 'Описание', 'Срок сдачи']) {
+    for (const label of ['Ученик', 'Название', /^Описание \(необязательно\)/, 'Срок сдачи']) {
       expect(within(dialog).getByLabelText(label)).toBeVisible()
     }
     await ue.click(within(dialog).getByRole('button', { name: 'Отмена' }))
@@ -143,7 +166,7 @@ describe('Диалог «Новое домашнее задание»', () => {
 
     const dialog = await openDialog(ue)
     expect(within(dialog).getByLabelText('Название')).toHaveValue('')
-    await ue.click(within(dialog).getByRole('button', { name: 'Close' }))
+    await ue.click(within(dialog).getByRole('button', { name: 'Закрыть' }))
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
   })
 

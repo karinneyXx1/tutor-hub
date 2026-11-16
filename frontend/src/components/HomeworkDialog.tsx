@@ -112,10 +112,10 @@ export function HomeworkDialog({ open, onOpenChange, students, onCreated }: Prop
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="gap-5 p-6 sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Новое домашнее задание</DialogTitle>
-          <DialogDescription>Ученик увидит задание в своём списке сразу после сохранения.</DialogDescription>
+          <DialogTitle className="text-xl">Новое домашнее задание</DialogTitle>
+          <DialogDescription>Ученик увидит задание в своём кабинете.</DialogDescription>
         </DialogHeader>
 
         <form id="homework-form" noValidate onSubmit={handleSubmit} aria-label="Новое домашнее задание">
@@ -149,7 +149,6 @@ export function HomeworkDialog({ open, onOpenChange, students, onCreated }: Prop
               <Input
                 value={values.title}
                 maxLength={TITLE_MAX + 1}
-                placeholder="Например, Циклы for и while"
                 onChange={(e) => update('title', e.target.value)}
                 {...fieldProps('title', 'hw-title')}
               />
@@ -157,11 +156,12 @@ export function HomeworkDialog({ open, onOpenChange, students, onCreated }: Prop
             </Field>
 
             <Field data-invalid={!!errors.description}>
-              <FieldLabel htmlFor="hw-description">Описание</FieldLabel>
+              <FieldLabel htmlFor="hw-description">
+                Описание <span className="font-normal text-muted-foreground">(необязательно)</span>
+              </FieldLabel>
               <Textarea
                 rows={3}
                 value={values.description}
-                placeholder="Что нужно сделать (необязательно)"
                 onChange={(e) => update('description', e.target.value)}
                 {...fieldProps('description', 'hw-description')}
               />
@@ -188,13 +188,13 @@ export function HomeworkDialog({ open, onOpenChange, students, onCreated }: Prop
           </FieldGroup>
         </form>
 
-        <DialogFooter>
+        <DialogFooter className="-mx-6 -mb-6 px-6">
           <DialogClose asChild>
-            <Button variant="outline" disabled={pending}>
+            <Button variant="outline" size="lg" disabled={pending}>
               Отмена
             </Button>
           </DialogClose>
-          <Button type="submit" form="homework-form" disabled={pending}>
+          <Button type="submit" form="homework-form" size="lg" disabled={pending}>
             {pending && <LoaderCircle className="animate-spin" aria-hidden="true" />}
             {pending ? 'Сохраняем…' : 'Выдать задание'}
           </Button>
