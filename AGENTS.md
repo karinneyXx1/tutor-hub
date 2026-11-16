@@ -4,14 +4,15 @@
 
 ## Проект
 
-«Код-репетитор»: API на FastAPI + SQLite в `backend/`. Описание эндпоинтов — [docs/api.md](docs/api.md), устройство — [docs/architecture.md](docs/architecture.md).
+«Код-репетитор»: API на FastAPI + SQLite в `backend/`, интерфейс на React + TypeScript + Vite + shadcn/ui в `frontend/`. Описание эндпоинтов — [docs/api.md](docs/api.md), устройство — [docs/architecture.md](docs/architecture.md).
 
 ## Команды
 
 ```bash
-make install   # зависимости
-make test      # тесты (обязательно перед завершением работы)
-make run       # сервер на :8000
+make install        # зависимости сервера и интерфейса
+make test          # все тесты (обязательно перед завершением работы)
+make run           # сервер на :8000
+make run-frontend  # интерфейс на :5173
 ```
 
 ## Правила
@@ -23,6 +24,14 @@ make run       # сервер на :8000
 - Переходы статусов ДЗ проверяются на сервере (см. `routers/homework.py`).
 - Не добавляйте секреты, токены и базы данных в репозиторий.
 - Обновляйте `docs/api.md`, если меняется API.
+
+## Правила для интерфейса (`frontend/`)
+
+- Переиспользуйте компоненты из `src/components/ui` (shadcn/ui): Button, Input, Textarea, NativeSelect, Field, Card, Dialog, Alert, Badge, Skeleton. Новый компонент добавляйте через `npx shadcn@latest add <name>`, а не пишите копию. Перед изменением назовите, какие компоненты переиспользуете.
+- Цвета, шрифт и скругления — только через токены темы в `src/index.css` (`bg-primary`, `text-destructive`, `text-success`, …); не пишите цвета в hex/rgb в компонентах.
+- Поведение форм описано в [docs/frontend-spec.md](docs/frontend-spec.md): подписи полей, сообщения об ошибках, защита от повторной отправки (`useSingleFlight`), состояния загрузки/пусто/ошибка.
+- Запросы к API — только через `src/lib/api.ts`. Тестовые ответы в `src/test` и `e2e/mock-api.ts` должны совпадать с форматом `backend/app/schemas.py`.
+- Тесты проверяют видимое поведение (роли, подписи, текст), а не внутреннюю реализацию.
 
 ## Готово, если
 

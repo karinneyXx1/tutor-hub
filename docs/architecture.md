@@ -16,7 +16,20 @@ backend/
 │       ├── homework.py  # ДЗ и переходы статусов
 │       └── lessons.py   # расписание
 └── tests/             # pytest, у каждого теста своя временная база
+
+frontend/
+├── src/
+│   ├── components/ui/   # компоненты shadcn/ui (исходники в проекте)
+│   ├── components/      # LoginForm, HomeworkDialog, HomeworkList
+│   ├── pages/           # HomeworkPage: список ДЗ и его состояния
+│   ├── hooks/           # useSingleFlight — защита от повторной отправки
+│   ├── lib/             # api.ts (клиент API), validation.ts, format.ts
+│   ├── test/            # MSW-сервер и тестовые данные в формате API
+│   └── index.css        # тема: цвета, шрифт, скругления
+└── e2e/                 # Playwright: сценарий в браузере (подменённый и настоящий API)
 ```
+
+Поведение интерфейса описано в [frontend-spec.md](frontend-spec.md).
 
 ## Данные
 
