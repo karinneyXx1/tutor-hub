@@ -106,3 +106,15 @@ class LessonOut(BaseModel):
     starts_at: datetime
     duration_min: int
     topic: str
+
+
+class ProgressOut(BaseModel):
+    student_id: int
+    student_name: str
+    total: int
+    assigned: int
+    submitted: int
+    returned: int
+    checked: int
+    overdue: int
+    average_grade: float | None
