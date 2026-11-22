@@ -81,6 +81,32 @@ def test_return_and_resubmit(client, tutor, student, homework):
     assert resubmitted.json()["answer"] == "v2"
 
 
+def test_resubmit_clears_feedback(client, tutor, student, homework):
+    hid = homework["id"]
+
+    client.post(f"/api/homework/{hid}/submit", json={"answer": "v1"}, headers=auth(student))
+    returned = client.post(
+        f"/api/homework/{hid}/return",
+        json={"feedback": "Исправь форматирование"},
+        headers=auth(tutor),
+    )
+    assert returned.status_code == 200
+    assert returned.json()["status"] == "returned"
+    assert returned.json()["feedback"] == "Исправь форматирование"
+
+    resubmitted = client.post(f"/api/homework/{hid}/submit", json={"answer": "v2"}, headers=auth(student))
+    assert resubmitted.status_code == 200
+    body = resubmitted.json()
+    assert body["status"] == "submitted"
+    assert body["answer"] == "v2"
+    assert body["feedback"] is None
+
+    # И при последующем чтении тоже
+    hw = client.get(f"/api/homework/{hid}", headers=auth(student)).json()
+    assert hw["status"] == "submitted"
+    assert hw["feedback"] is None
+
+
 def test_review_requires_submitted(client, tutor, homework):
     resp = client.post(f"/api/homework/{homework['id']}/review", json={"grade": 4}, headers=auth(tutor))
     assert resp.status_code == 409

@@ -86,8 +86,16 @@ def submit_homework(
     # submitted/checked — повторная сдача запрещена.
     if row["status"] not in ("assigned", "returned"):
         raise HTTPException(status.HTTP_409_CONFLICT, "Homework cannot be submitted now")
+    # При повторной сдаче после возврата очищаем прошлый фидбек/оценку,
+    # чтобы замечания к старому решению не выглядели отзывом на новое.
     db.execute(
-        """UPDATE homework SET status = 'submitted', answer = ?, submitted_at = datetime('now')
+        """UPDATE homework
+           SET status = 'submitted',
+               answer = ?,
+               submitted_at = datetime('now'),
+               grade = NULL,
+               feedback = NULL,
+               checked_at = NULL
            WHERE id = ?""",
         (data.answer, homework_id),
     )
