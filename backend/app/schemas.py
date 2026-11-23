@@ -65,6 +65,15 @@ class ReviewIn(BaseModel):
     grade: int = Field(ge=1, le=5)
     feedback: str = Field(default="", max_length=5000)
 
+    @field_validator("grade", mode="before")
+    @classmethod
+    def _grade_must_not_be_bool(cls, v):
+        # В JSON bool является отдельным типом, но в Python bool наследуется от int,
+        # поэтому без этой проверки True/False проходят как 1/0.
+        if isinstance(v, bool):
+            raise ValueError("boolean is not a valid grade")
+        return v
+
 
 class ReturnIn(BaseModel):
     feedback: str = Field(max_length=5000)

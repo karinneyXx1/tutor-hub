@@ -124,6 +124,19 @@ def test_grade_range(client, tutor, student, homework):
     assert resp.status_code == 422
 
 
+def test_grade_rejects_bool(client, tutor, student, homework):
+    hid = homework["id"]
+    client.post(f"/api/homework/{hid}/submit", json={"answer": "v1"}, headers=auth(student))
+
+    # bool в JSON нельзя принимать за числовую оценку
+    resp = client.post(
+        f"/api/homework/{hid}/review",
+        json={"grade": True, "feedback": ""},
+        headers=auth(tutor),
+    )
+    assert resp.status_code == 422
+
+
 def test_filter_by_status(client, tutor, student, homework):
     client.post(f"/api/homework/{homework['id']}/submit", json={"answer": "v1"}, headers=auth(student))
     submitted = client.get("/api/homework?status=submitted", headers=auth(tutor)).json()
